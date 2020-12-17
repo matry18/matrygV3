@@ -1,0 +1,55 @@
+---
+title: "ICY0006 - Probability Theory and Statistics - Matryg project, TalTech"
+output: html_notebook
+---
+
+# Stage 1  
+
+## Introduction
+This is my project for the course ICY0006 - Probability Theory and Statistics at TalTech University.  
+Among the content of my project is a matryg_Notebook.Rmd-file and from that file a html-file can be generated and read as a report.
+Any questions related to the report can be sent to my mail: matryg@ttu.ee  
+The link to my GitHub repo is https://github.com/matry18/matryg  
+Enjoy the reading!  
+
+## The work environment  
+For this project I have used RStudio as my IDE. I have used version control with Git and continuously committed my work to GitHub, where the repository is public accessible.  
+I have used the Notebook function in RStudio to generate the matryg_Notebook.Rmd-file from where a html-file can be generated and read as the report for this project.  
+The development of the report was an ongoing process following the progression of the course and continuous implementing the topics thought in the lecture and practices.  
+
+## The dataset  
+The original dataset for this project was based on house prices and computer generated. This caused some issues since the dataset was not suitable due to the certain problem. Because of that the dataset was changed 4 weeks into the course. Doing the 8th week of the course I faced some problems with all the possible linear regressions in the dataset being heteroscedastic. This lead to another change of the dataset. Therefore this dataset is version 3 in my project.  
+
+This dataset is about lung capacity and is public available at https://www.kaggle.com/aakashmisra/lung-capacity with an unknown license. The version of the dataset is Version 1 and was created the 28/9 2020 by the user Aakash Misra - https://www.kaggle.com/aakashmisra  
+The dataset is a .csv-file and I downloaded it and unzipped it before importing it. When doing the importing of the dataset I used a dynamic file.choose() method where I chose the downloaded and unzipped file.  
+```{r}
+data1 <- read.csv(file.choose(), header=TRUE)
+View(data1)
+attach(data1)
+```
+
+To be able to manipulate and visualize the dataset the libraries and dependencies was loaded.
+```{r}
+##Data Manipulation
+#library(tidyverse)
+#library(psych)
+#library(lubridate)
+#library(xts)
+#library(tseries)
+#library(forecast)
+#library(MLmetrics)
+#library(MASS)
+##Visualisation 
+#library(corrplot)
+#library(plotly)
+#library(viridis)
+#library(ggmap)
+#library(knitr)
+#library(dygraphs)
+#library(ggthemes)
+#library(reshape)
+#library(reshape2)
+#library(ggplot2)
+#library(ggcorrplot)
+#library(ggstatsplot)
+```
