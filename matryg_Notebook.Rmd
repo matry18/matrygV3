@@ -9,7 +9,7 @@ output: html_notebook
 This is my project for the course ICY0006 - Probability Theory and Statistics at TalTech University.  
 Among the content of my project is a matryg_Notebook.Rmd-file and from that file a html-file can be generated and read as a report.
 Any questions related to the report can be sent to my mail: matryg@ttu.ee  
-The link to my GitHub repo is https://github.com/matry18/matryg  
+The link to my GitHub repo is https://github.com/matry18/matrygV3  
 Enjoy the reading!  
 
 ## The work environment  
@@ -31,25 +31,84 @@ attach(data1)
 To be able to manipulate and visualize the dataset the libraries and dependencies was loaded.
 ```{r}
 ##Data Manipulation
-#library(tidyverse)
-#library(psych)
-#library(lubridate)
-#library(xts)
-#library(tseries)
-#library(forecast)
-#library(MLmetrics)
-#library(MASS)
-##Visualisation 
-#library(corrplot)
-#library(plotly)
-#library(viridis)
-#library(ggmap)
-#library(knitr)
-#library(dygraphs)
-#library(ggthemes)
-#library(reshape)
-#library(reshape2)
-#library(ggplot2)
-#library(ggcorrplot)
-#library(ggstatsplot)
+library(tidyverse)
+library(psych)
+library(lubridate)
+library(xts)
+library(tseries)
+library(forecast)
+library(MLmetrics)
+library(MASS)
+#Visualisation 
+library(corrplot)
+library(plotly)
+library(viridis)
+library(ggmap)
+library(knitr)
+library(dygraphs)
+library(ggthemes)
+library(reshape)
+library(reshape2)
+library(ggplot2)
+library(ggcorrplot)
+library(ggstatsplot)
 ```
+
+## Variables  
+In the following I will describe the variables in the dataset.  
+The dataset consists of 725 observations and has 6 variables.  
+
+**LungCap** is short for lung capacity also know as total lung capacity (TLC). Lung capacity is the volume of air in the lungs upon the maximum effort of inspiration.  Among healthy adults, the average lung capacity is about 6 liters. Age, gender, body composition, and ethnicity are factors affecting the different ranges of lung capacity among individuals. TLC rapid increases from birth to adolescence and plateaus at around 25 years old. Males tend to have a greater TLC than females, while individuals with tall stature tend to have greater TLC than those with short stature, and individuals with a high waist-to-hip ratio generally have a lower TLC. Individuals of African descent have a lower TLC compared to individuals of European descent. Additional factors that affect an individual's lung capacity include the level of physical activity, chest wall deformities, and respiratory diseases.^[From https://www.ncbi.nlm.nih.gov/books/NBK541029/, seen 17/12-20.]  
+The lung capacity is a dependent variable since it is influenced by age, gender etc. It is a continuous value as well as quantitative. It is measured on an interval scale.  
+
+**Age** indicates the persons age in years. This variable is independent, quantitative and discrete since all the age values are presented as integer values on an interval scale.  
+
+**Height** is the height in inches. This is an independent, continuous, quantitative variable measured on an interval scale. This variable must be transformed into a measurement of  meter. Therefore I multiply the height value with 0.0254 to get the value in meter. This value has been added to the dataset as the variable **HeightMeter** and share the same characteristics as Height.
+```{r}
+data1$HeightMeter <- data1[,3]*0.0254
+View(data1)
+```
+The **Smoke** variable is independent, discrete and qualitative. It defines if the person is smoking, since it influences the lung capacity. The categorical values is "yes" if the person smokes and "no" if the person does not smoke. This is measured on a nominal scale. As an alternative the true/false-value could have been indicated with numbers, where 1 is true and 0 is false, but for now I will not manipulate the value.  
+
+**Gender** defines the gender of the person. This variable is independent, discrete and qualitative measured on a nominal scale. If the person is male the value is "male" and if the person is female the value is "female". As an alternative the true/false-value could have been indicated with numbers, where 1 is true and 0 is false, but for now I will not manipulate the value.  
+
+
+The **Caesarean** indicates how the person was born. If the person was born by caesarean the value is "yes" and if not the value is "no". This is an independent, discrete, qualitative variable measured on a nominal scale. As an alternative the true/false-value could have been indicated with numbers, where 1 is true and 0 is false, but for now I will not manipulate the value.  
+
+### Missing data
+Before going any further with the dataset I will check for any missing values by the use of the inbuilt function in R Studio.
+```{r}
+which(is.na(data1))
+```
+Since the returned value is zero that means that I don't have any missing data in my dataset.  
+
+### Data visualization  
+In the following I will visualize each variable. For Lung capacity, age and height in meters I have used histograms.
+```{r}
+hist(data1$LungCap, las=1, ylim= c(0,120),xlab = "Lung capacity", main= "Histogram of lung capacity")
+hist(data1$Age, xlim = c(0,20), ylim=c(0,140), las=1, xlab = "Age in years", main= "Histogram of age")
+hist(data1$HeightMeter, xlim= c(1,2.3), las=1, xlab = "Height in meter", main= "Histogram of height in meter")
+
+```
+For the categorical variables I first had to convert them into numerical values. For Smoke and Caesarean the original value was "no" or "yes" which I turned into a numerical representation where "yes" = 1 and "no" = 0. For the gender variable the value "male" was set to 1 and the value "female" was set to 0.
+```{r}
+data1Num <- data1 %>% mutate(Smoke = case_when(Smoke == "yes" ~ 1, Smoke == "no" ~ 0), Gender = case_when(Gender == "male" ~ 1, Gender == "female" ~ 0), Caesarean = case_when(Caesarean == "yes" ~ 1, Caesarean == "no" ~ 0))
+```
+After having converted the categorical values they are visualized in a pie chart.
+```{r}
+pie(table(data1Num$Smoke), main= "Distribution of people who smoke.", xlab="0 = do not smoke, 1 = do smoking")
+pie(table(data1Num$Gender), main= "Distribution of gender.", xlab="0 = female, 1 = male")
+pie(table(data1Num$Caesarean), main= "Distribution of people born by caesarean.", xlab="0 = not born by caesarean, 1 = born by caesarean")
+```
+
+
+Revurder distributin graph, se https://www.statmethods.net/graphs/density.html
+
+
+
+
+
+For beskrivelse se lige slides om Distributions 
+
+
+
