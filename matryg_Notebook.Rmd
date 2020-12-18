@@ -304,23 +304,35 @@ print(round(sd(data1$Age)))
 ```{r}
 print(sd(data1$HeightMeter))
 ```
-### Analysis
+### Analysis  
+
+#### Lung capacity  
+The mean and trimmed mean is very close to each other which indicates that no majority of data points is located in the outer 10 % of the lower or upper end of the distribution. The mean and the median is also very close to each other which indicates that the balance of the distribution is close to the center of the distribution. This would imply that the distribution is very close to a normal distribution which can be confirmed by the visual representation. The mode is 8.35 which corresponds very well with the histogram and curve since that is the peek. From the visual representation is can be difficult to read the exact value so the exact mode value is very helpful. The range values defines that start and end value for the variable, so the worst lung capacity is 0.507 and the best is 14.675. The IQR of 3.65 indicates that the middle 50 % of the data is not that wide spread in the distribution. The SD value (2.662008) is quite small which tells me that the spread of the data points from the mean is quite narrow. The variability measures corresponds very well with the graphical representation of the distribution.  
+
+#### Age  
+The mean and trimmed mean is actually really close to each other but when the value is rounded off the difference increases but the two values (12 and 13) is still close to each other. From this I can deduce that there is not many data points in the outer 10 % of the lower and upper part of the distribution. The mean and median is also very close to each other so the balance of the distribution is in the center of the distribution. The mode value is equal to the trimmed mean and median which indicates a normal distribution which can be confirmed by the visual representation of the histogram and density curve. Since the mean value is smaller than the median value a small negative skew can be seen. The central tendency values and the visual representation corresponds very well with each other. The youngest person in the population is 3 years old and the oldest is 19 years old. The IQR value of 6 indicates that the central 50 % of the data is spread out among those 6 years. The SD value of 4 indicate how far from the mean value that the data is spread out. The value indicates that there is some spread among the observations for this variable but nothing of big concern. The variability measures correspons very well with the visual representation of the distribution.  
+
+#### Height in meter  
+The mean and trimmed mean is almost identical so no crucial data points is located in the outer 10 % of the scale for this variable. The same goes for the mode value which is identical with the medial value. This indicates a symmetric distribution and when looking at the visual representation of the distribution this corresponds very well with the values. The shortest person in the observations is 1.15062 meter and the tallest person is 2.07772 meter. The IQR value of 0.26416 indicates that the central 50 % of the data is not that wide spread out. The SD value (0.1829345) is relatively small and indicates that the data for this variable is not that wide spread out. The variability measures corresponds very well with the graphical representation of the distribution.  
+
+I have chosen to leave out some of the variables when it did not add any value to the project to analyze variables such as true-false variables and other categorical variables.  
+
+I general the graphical representation gives the same impression as the values of central tendency measures and variability measures. However it can be difficult to read the exact values from the graphical representation and the central tendency measures and variability measures helps to understand the exact values.  
+When the values are rounded some details becomes hidden from the central tendency measures. The data representation can either be in numeric form or visual form depending on how you want to present the data and with what purpose. Usually it is easier to get an overview from the visual representation but the details is easier seen in the numerical representation of the data.  
+
+# Stage 3
+
+## Linear relationships between variables  
+
+### Numerical variables  
+In the following I will look at the linear regression between different variables. To be able to look at the linear relationship between variables I will first look at the correlation coefficient, first in a correlation matrix and then I will visualize it with a heat map. A heat map relates the numeric value from -1 to 1 into a color code where red represents a value of 1 and blue represents a value of -1. 0 indicates a non-correlation. To make the heat map a bit easier to read I have rounded the numerical value to two decimal numbers.  
+
+First the variables has to be selected. I have selected: DOM
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-# Lottery
+# Lottery - Stage 4
 
 ## Viking Lotto  
 I have chosen one of the Danish lottery systems, known as "Viking Lotto", which can be found here:
