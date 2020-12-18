@@ -146,20 +146,25 @@ pie(mytable, labels = lbls,
 ```
 **Caesarean**
 ```{r}
-mytable <- table(data1Num$Smoke)
+mytable <- table(data1Num$Caesarean)
 lbls <- paste(names(mytable), "\n", mytable, sep="")
 pie(mytable, labels = lbls,
    main="Distribution of people born by caesarean,\n (with sample sizes)", xlab="0 = not born by caesarean, 1 = born by caesarean")
 ```
+### Interpreting the visualization  
+In the following I will describe what can be seen from the graphs and charts.  
+
+The lung capacity has a nice bell shape, which indicates a normal distribution. The distribution is very close to be complete symmetrical with a single peek.  
+The age variable is close of having a nice bell shape but it tends to have a small negative skewness. It has a single peek and is close to being symmetrical but not complete symmetrical.  
+The height in meter has a very nice bell shape which indicates a normal distribution with a single peek and the shape of it is very close to be symmetrical.  
+The distribution of people who smoke indicates that approx. 1/8 of the people in the population do smoke and 7/8 does not.  
+The distribution of genders is close to be even with slightly more males than females in the population.  
+The distribution of people born by ceasarean shows that nearly 1/4 of the population is born by caesarean and 3/4 is not.  
 
 
-Revurder distributin graph, se https://www.statmethods.net/graphs/density.html
 
 
 
-
-
-For beskrivelse se lige slides om Distributions 
 
 
 
