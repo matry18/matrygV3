@@ -331,12 +331,12 @@ As for variables I have selected lung capacity, age and height in meters since t
 ### Removing outliers  
 
 Then I'll remove the outliers in those variables. Often an outlier is an anomaly in the dataset that occurs because of the measurement errors, but also because the experiment being observed experiences momentary but drastic turbulence. The outliers can have a huge impact on the result of a linear regression model. The statistical parameters e.g. mean, standard deviation (SD) and correlation are impacted by outliers. To locate the outliers one can use the IQR as it does not depend on the mean and SD.  
-The IQR is the central 50 % which is the same as the area above the 25th percentile of a distribution and under the 75th percentile of an distribution. A point is defined as an outlier if it is below the 25th or above the 75th percentile by a factor of 1,5 times the IQR. The outliers can be visualized in a box plot, since the box plot shows the median and the 1st and 3rd quartiles.  
-The below box plot is just an example on how to visualize the outliers.  
+The IQR is the central 50 % which is the same as the area above the 25th percentile of a distribution and under the 75th percentile of an distribution. A point is defined as an outlier if it is below the 25th or above the 75th percentile by a factor of 1,5 times the IQR. The outliers can be visualized in a boxplot, since the boxplot shows the median and the 1st and 3rd quartiles.  
+The below boxplot is just an example on how to visualize the outliers.  
 ```{r}
 boxplot(data1$LungCap, las=1, main= "Boxplot for lung capacity")
 ```
-From the above box plot one outlier can be seen. but it can be difficult to read the exact value of the outliers in a box plot. Therefore a statistical method for finding outliers is needed. By using the quantile() function I can find find the 25th and 75th percentile, and by using the IQR() function I can see the difference between the 75th and 25th percentiles.
+From the above boxplot one outlier can be seen. but it can be difficult to read the exact value of the outliers in a boxplot. Therefore a statistical method for finding outliers is needed. By using the quantile() function I can find find the 25th and 75th percentile, and by using the IQR() function I can see the difference between the 75th and 25th percentiles.
 ```{r}
 # Lung capacity
 Q_lung <- quantile(data1$LungCap, probs = c(0.25, 0.75), na.rm = FALSE)
@@ -386,10 +386,67 @@ ggcorrplot(corMatrix,outline.col = "white",  hc.order = TRUE,type = "full",lab =
 From the correlation matrix and the heat map there seems to be a very strong correlation between lung capacity and height in meter since the Pearson's correlation coefficient is 0.91. There is a strong correlation between age and lung capacity (0.82 Pearson's correlation coefficient) as well as between age and height in meter (0.83 Pearson's correlation coefficient). There is a perfect correlation between a variable and itself but that should be excluded and not be looked into.  
 The lung capacity must be the dependent variable, depending on both age and height in meter.  
 
-### Scatter plot - dependent variable vs. independent variable  
-From the above correlation matrix I know that lung capacity is the dependent variable, where age and height in meter is the independent variable. In the following I will create scatter plots for respectively lung capacity vs. age, and lung capacity vs. height in meter.  
+## Scatterplot - dependent variable vs. independent variable  
+From the above correlation matrix I know that lung capacity is the dependent variable, where age and height in meter is the independent variables. In the following I will create scatterplots for respectively lung capacity vs. age, and lung capacity vs. height in meter.  
 
+**Lung capacity vs. age**  
+```{r}
+plot(data2$Age, data2$LungCap, main ="Scatterplot: Lung capacity vs. age", ylab = "Lung capacity", xlab = "Age in years", las=1, xlim=c(0,20), ylim=c(0,15))
+```
+From the scatterplot I can see a strong relationship between age and lung capacity. The higher the age value the higher the lung capacity value. The two variables has a positive association. I can also observe a linear relationship since the points clusters along a straight (wide) line. The scatterplot shows homoscedasticity since all the random variables have the same finite variance. From the scatterplot it is visible that the age variable is discrete since all the points forms a vertical "line".  
 
+**Lung capacity vs. height in meter**  
+```{r}
+plot(data2$HeightMeter, data2$LungCap, main ="Scatterplot: Lung capacity vs. height in meter", ylab = "Lung capacity", xlab = "Height in meter", las=1, xlim=c(1.1,2.1), ylim=c(0,15))
+```
+The scatterplots shows a strong relationship between lung capacity and height in meter. It is easy to see that when the value for height in meter increases the lung capacity increases as well. I can see a positive linear relationship between the two variables. The scatterplot is in a homoscedastic form. I can see that both variables are continuous since the points in the plot is not in a vertical or horizontal "line".  
+
+## Linear regression model
+
+In the following I will look into a linear regression model and visualize it with a scatter plot with a line.  
+I have chosen lung capacity vs. height in meter, since it has the highest correlation coefficient value.
+```{r}
+cor(data2$LungCap,data2$HeightMeter)
+mod <- lm(data2$LungCap ~ data2$HeightMeter)
+summary(mod)
+mod$coefficients
+plot(data2$HeightMeter, data2$LungCap, main ="Scatterplot: Lung capacity vs. height in meter", ylab = "Lung capacity", xlab = "Height in meter", las=1, xlim=c(1.1,2.1), ylim=c(0,15))
+abline(mod, col=2, lwd=3)
+plot(mod$residuals, col="blue", lwd=2, ylab="Residuals", las=1, main = "Scatterplot for residuals")
+abline(h=0)
+```
+In the summary the residuals (errors) are shown, e.g. the residual value for median is -0.0060. The estimate for the intercept is -13.9263 and it's standard error is  0.3669. The regression coefficient is the average change in the dependent variable (lung capacity) for a 1-unit change in the independent variable (height in meter). It is the slope of the regression line. For height in meter the estimate is 13.2335 and the standard error is 0.2213. The residual standard error is 1.087 which is a measure of a variation of observations around the regression line. This is the same as the square root of the mean squared error. The residual standard error tells how far observed lung capacity are from the predicted or fitted lung capacity. The multiple R-squared values (0.832) means that approx. 83 % of variation of lung capacity can be explained by this model.  
+I can see that the height in meter is the cause of the lung capacity. Both of the variables is continuous and have a strong positive linear relationship. The red line (the least squared regression line) is the prediction of the lung capacity based on the height in meter. All the points are the actual data values. The distance from a point to the line is the error called residual, since it is the difference between the actual data point and the predicted value. The line passes through the mean of both variables (lung capacity and height in meter).  
+The scatterplot for the residuals shows a random pattern.  
+
+## Regression with multiple variables  
+In the following I will look into regression with multiple variables. I will use lung capacity as the dependent variable and age and height in meter as the independent variables to fit my linear regression model.
+```{r}
+model1 <- lm(data2$LungCap ~ data2$Age + data2$HeightMeter)
+summary(model1)
+cor(data2$Age, data2$HeightMeter, method = "pearson")
+confint(model1, conf.level=0.95)
+plot(model1)
+```
+From the summary I can see that the R-squared is 0.8425 which means that approx. 84 % of variation in lung capacity can be explained by this model using age and height in meter. The residual standard error is 1.053 on 721 degrees of freedom. This gives me an idea of how far observed lung capacity (Y values) are form the predicted or fitted lung capacity (the Y-hats). The Intercept of -11.72674 is the estimated mean Y (lung capacity) value when all X-values (age and height in meter) are zero. In other words it is the estimated mean lung capacity for a person with age and height in meter of zero. The value for age estimated is 0.12409. This is the effect of Age on lung capacity adjusting or controlling for height in meter. In other words an increase of 1 year in age is associated with an increase of 0.12409 in lung capacity adjusting or controlling for height in meter. The slope for height in meter is 10.96872. This is the estimated effect of height in meter on lung capacity adjusting for age.  
+
+The Pearson's correlation between age and height in meter is 0.8348995 so the two variables are very highly correlated. The collinearity between age and height in meter means that I should not directly interpret the slope (e.g. age), as the effect of age on lung capacity adjusting for height in meter. The high correlation between age and height in meter suggests that these two effects are somewhat bounded together.  
+
+The estimated slope for age is 0.12409 or 95 % confident that the true slope is between 0.08910293 and 0.1590719. The estimated slope for height in meter is 10.96872 or 95 % confident that the true slope is between 10.20394027 and 11.7335008.  
+
+To check the regression diagnostics for this model with two independent variables I'll look at the plot for residuals vs. fitted. The relationship between lung capacity and age and height in meter is approx. linear. The variation looks constant. The lung capacity given age and height in meter is approx. normal which can been seen on the Normal Q-Q plot.  
+
+If I wanted to fit a model with all the possible X-variables that would be age, height in meter, smoke, gender and caesarean, this could be done so.
+```{r}
+model2 <- lm(data2$LungCap ~ data2$Age + data2$HeightMeter + data2$Smoke + data2$Gender + data2$Caesarean)
+summary(model2)
+plot(model2)
+```
+The two models is close to each other but the multiple R-squared is higher for the model with all the X-variables. Also the residual standard error value is lower for the model with all the X-values. This makes good sense since a model provided with more variables should be able to produce a more correct estimate.  
+
+# Stage 5 - Training and testing regression model  
+
+## 
 
 
 
