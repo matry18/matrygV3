@@ -125,31 +125,28 @@ lines(xfit, yfit, col="blue", lwd=2)
 
 plot(density(data1$HeightMeter), main = "Kernel Density of height in meter", xlab = "Height in meter", las=1)
 ```
-For the categorical variables I first had to convert them into numerical values before they could be visualized. For Smoke and Caesarean the original value was "no" or "yes" which I turned into a numerical representation where "yes" = 1 and "no" = 0. For the gender variable the value "male" was set to 1 and the value "female" was set to 0.
-```{r}
-data1Num <- data1 %>% mutate(Smoke = case_when(Smoke == "yes" ~ 1, Smoke == "no" ~ 0), Gender = case_when(Gender == "male" ~ 1, Gender == "female" ~ 0), Caesarean = case_when(Caesarean == "yes" ~ 1, Caesarean == "no" ~ 0))
-```
-After having converted the categorical values they are visualized in a pie chart.
+In the following I will visualize the categorial variables with pie chart since it makes a good overview.  
+
 **Smoke**
 ```{r}
-mytable <- table(data1Num$Smoke)
-lbls <- paste(names(mytable), "\n", mytable, sep="")
-pie(mytable, labels = lbls,
-   main="Distribution of people who smoke,\n (with sample sizes)", xlab="0 = do not smoke, 1 = do smoke")
+smoke.count<-table(data1$Smoke)
+lbls <- paste(names(smoke.count), "\n", smoke.count, sep="")
+pie(smoke.count,border=T, labels = lbls,
+   main="Distribution of people who smoke,\n (with sample sizes)")
 ```
 **Gender**
 ```{r}
-mytable <- table(data1Num$Gender)
-lbls <- paste(names(mytable), "\n", mytable, sep="")
-pie(mytable, labels = lbls,
-   main="Distribution of gender,\n (with sample sizes)", xlab="0 = female, 1 = male")
+gender.count<-table(data1$Gender)
+lbls <- paste(names(gender.count), "\n", gender.count, sep="")
+pie(gender.count,border=T, labels = lbls,
+   main="Distribution of gender,\n (with sample sizes)")
 ```
 **Caesarean**
 ```{r}
-mytable <- table(data1Num$Caesarean)
-lbls <- paste(names(mytable), "\n", mytable, sep="")
-pie(mytable, labels = lbls,
-   main="Distribution of people born by caesarean,\n (with sample sizes)", xlab="0 = not born by caesarean, 1 = born by caesarean")
+caesarean.count<-table(data1$Caesarean)
+lbls <- paste(names(caesarean.count), "\n", caesarean.count, sep="")
+pie(caesarean.count,border=T, labels = lbls,
+   main="Distribution of people born by caesarean,\n (with sample sizes)")
 ```
 ### Interpreting the visualization  
 In the following I will describe what can be seen from the graphs and charts.  
@@ -161,6 +158,153 @@ The distribution of people who smoke indicates that approx. 1/8 of the people in
 The distribution of genders is close to be even with slightly more males than females in the population.  
 The distribution of people born by ceasarean shows that nearly 1/4 of the population is born by caesarean and 3/4 is not.  
 
+# Stage 2  
+## Quantitative overview of data  
+
+In the following we will compute the central tendency, also known as measure of central tendency or average. Basically this is the central value for a probability distribution. I will also compute the variability measures which is how "spread out" the data is. Then I will do a short analysis of the central tendencies and variability measures and compare the outcome with the visual representation of the distributions.  
+
+### Central tendency measures  
+
+#### Mean, trimmed mean, median and mode  
+
+The mean is the sum of numerical values of each observation divided by the total number of observations, or put in a simpler way the sum of numbers divided by the number of numbers. The mean indicates at what point the distribution is in balance. In the following you will see the population mean for lung capacity, age and height in meters.  
+
+**Lung capacity mean**
+```{r}
+lungCap.mean <- mean(data1$LungCap)
+print(lungCap.mean)
+```
+**Age mean**
+```{r}
+age.mean <- mean(data1$Age)
+print(age.mean)
+```
+Since the age variable is discrete I will have to round of the mean value to not have a decimal number.
+```{r}
+print(round(age.mean))
+```
+**Height in meters mean**
+```{r}
+heightMeter.mean <- mean(data1$HeightMeter)
+print(heightMeter.mean)
+```
+With the trimmed mean I remove the lower and upper values in the distribution. In the following I will present a trimmed mean of 20 % for the same variables as above. This means that I will remove the lower 10 % and upper 10 % from the distribution and then recalculate the mean value.  
+
+**Lung capacity trimmed mean of 20 %**
+```{r}
+mean(data1$LungCap, trim = 0.2)
+```
+**Age trimmed mean of 20 %**
+```{r}
+mean(data1$Age, trim = 0.2)
+```
+And since age is a discrete variable it will have to be rounded of.
+```{r}
+round(mean(data1$Age, trim = 0.2))
+```
+**Height in meter trimmed mean of 20 %**
+```{r}
+mean(data1$HeightMeter, trim = 0.2)
+```
+The median is the 50th percentile of the distribution which is the same as the value in the exact middle of the distribution. If the distribution is a even number, then I will take the average of the middle two values. The median can be found with the summary-function i R.
+```{r}
+summary(data1)
+```
+This shows the median for **lung capacity** is 8.0, for **age** it is 13.0 and for **height in meter** it is 1.661.  
+
+The mode is the most frequent value in the distribution for a given variable. To compute the mode I use a function.  
+```{r}
+getmode <- function(v) {
+  uniqv <- unique(v)
+  uniqv[which.max(tabulate(match(v, uniqv)))]
+}
+```
+**Mode lung capacity**
+```{r}
+lungCap.mode <- getmode(data1$LungCap)
+print(lungCap.mode)
+```
+**Mode age**
+```{r}
+age.mode <- getmode(data1$Age)
+print(age.mode)
+```
+**Mode height in meter**
+```{r}
+heightMeter.mode <- getmode(data1$HeightMeter)
+print(heightMeter.mode)
+```
+### Variability measures  
+
+#### Range & interquartile range  
+
+The range of an observation variable is the difference of its largest and smallest data values. It is a measure of how far apart the entire data spreads in value.  
+
+**Lung capacity range**
+```{r}
+print(range(data1$LungCap))
+```
+**Age range**
+```{r}
+print(range(data1$Age))
+```
+**Height in meter range**
+```{r}
+print(range(data1$HeightMeter))
+```
+The interquartile range (IQR) of an observation variable is the difference of its upper and lower quartiles. It is a measure of how far apart the middle portion of data spreads in value. In other words it is the range of the middle 50 % of the scores in a distribution.  
+
+**Lung capacity IQR**
+```{r}
+IQR(data1$LungCap)
+```
+**Age IQR**
+```{r}
+IQR(data1$Age)
+```
+**Height in meter IQR**
+```{r}
+IQR(data1$HeightMeter)
+```
+#### Variance & Standard Deviation  
+
+The variance is a numerical measure of how the data values is dispersed around the mean. Please notice that there is a difference in the variance depending on if it is from a population or sample! In the following I am looking at the variance on a population for lung capacity, age and height in meter.  
+
+**Lung capacity variance**
+```{r}
+print(var(data1$LungCap))
+```
+**Age variance**
+```{r}
+print(var(data1$Age))
+```
+The variance produces a measures of how far a set of numbers is spread out from their average value. Since age is a discrete value it has to be rounded off.
+```{r}
+print(round(var(data1$Age)))
+```
+**Height in meter variance**
+```{r}
+print(var(data1$HeightMeter))
+```
+The standard deviation (SD) of an observation variable is the square root of its variance. This is a useful measure of variability when the distribution is normal (or close to) because the proportion of the distribution within a given number of standard deviations from the mean can be calculated. Put in a more simple way, the SD can be used to measure the spread of the data in relation to the mean.  
+
+**Lung capacity SD**
+```{r}
+print(sd(data1$LungCap))
+```
+**Age SD**
+```{r}
+print(sd(data1$Age))
+```
+Again the value has to be an integer so it is rounded off.
+```{r}
+print(round(sd(data1$Age)))
+```
+**Height in meter SD**
+```{r}
+print(sd(data1$HeightMeter))
+```
+### Analysis
 
 
 
@@ -168,3 +312,97 @@ The distribution of people born by ceasarean shows that nearly 1/4 of the popula
 
 
 
+
+
+
+
+
+
+
+
+# Lottery
+
+## Viking Lotto  
+I have chosen one of the Danish lottery systems, known as "Viking Lotto", which can be found here:
+https://danskespil.dk/vikinglotto/vindertal  
+
+The lottery ticket has a game board with 36 elements which are the numbers from 1-36. The player should choose 7 numbers on the game board - this is known as a row.  
+
+Once a week the lottery numbers are drawn. There is drawn 7 winning numbers and 2 additional numbers.  
+The criteria for a success is:  
+- 6 winning numbers plus 1 of the additional numbers.  
+- 6 winning numbers.  
+- 5 winning numbers plus 1 of the additional numbers.  
+- 5 winning numbers.  
+- 4 winning numbers plus 1 of the additional numbers.  
+- 4 winning numbers.  
+- 3 winning numbers.  
+
+In the lottery the sequence of the 7 winning numbers is selected among the fist 36 positive integers and the sequence of the winning numbers is not relevant. To calculate the possible sequences of winning numbers I use the formula:  
+(n,k) = n(n-1)...(n-k+1) / k(k-1)...1  
+The same formula can be written with factorials:  
+n! / (k!*(n-k)!), when k <= n, and which is zero when k>n.
+```{r}
+kombin <- function(n,k)
+{
+  factorial(n) / (factorial(k)*factorial(n-k))
+}
+```
+The number of possible rows is (36,7) = 8347680.
+```{r}
+kombin(36,7)
+```
+I will start out with the simplest of the cases where I only focus on the winning numbers.  
+Let x denote the number of correct winning numbers.  
+The number of rows with x number of correct winning numbers is (7,x)*(29,7-x), which is the number of ways the correct x numbers can be among the correct 7 winning numbers multiplied with the number of ways the remaining 7-x numbers in the row can be selected from the 29 numbers which are not the correct winning numbers.  
+P(x) = ((7,x)*(29,7-x)) / (36,7)  
+**x = 6  **
+```{r}
+(kombin(7,6)*kombin(29,7-6)) / kombin(36,7)
+```
+**x = 5**
+```{r}
+(kombin(7,5)*kombin(29,7-5)) / kombin(36,7)
+```
+**x = 4**
+```{r}
+(kombin(7,4)*kombin(29,7-4)) / kombin(36,7)
+```
+**x = 3**
+```{r}
+(kombin(7,3)*kombin(29,7-3)) / kombin(36,7)
+```
+The above results only focus on the cases where the winning numbers are drawn and not the additional numbers. The additional numbers is two numbers. Let y denote the number of correct additional numbers. I can either have 0, 1 or 2 correct additional numbers.  
+I will use the following formula:  
+P(x correct winning numbers and y correct additional numbers) = ( (7,x)* (2,y)* (27,7-(x+y)) ) / (36,7)  
+
+First I'll find the number of combinations for x to be among the correct 7 winning numbers, they are multiplied with the number of combinations for y to be among the correct 2 additional numbers, multiplied with the number of ways where the remaining 7-(x and y) numbers of the row is selected among the 27 numbers which is not correct.
+
+If I have **6 winning numbers and 1 additional number** the formula looks like this:  
+P(6,1) = ( (7,6)* (2,1)* (27,7-(6+1)) ) / (36,7)
+```{r}
+(kombin(7,6)*kombin(2,1)*kombin(27,7-(6+1))) / kombin(36,7)
+```
+**5 winning numbers and 1 additional number**
+```{r}
+(kombin(7,5)*kombin(2,1)*kombin(27,7-(5+1))) / kombin(36,7)
+```
+**4 winning numbers and 1 additional number**
+```{r}
+(kombin(7,4)*kombin(2,1)*kombin(27,7-(4+1))) / kombin(36,7)
+```
+It would make sense that the lower the probability the higher the price. The order of the price is related to the number of correct winning numbers and additional numbers: 6 winning numbers + 1 additional number > 6 winning numbers > 5 winning numbers + 1 additional number > 5 winning numbers  > 4 winning numbers + 1 additional number > 4 winning numbers > 3 winning numbers.  
+Let's compare the probability the highest price should have the lowest probability
+```{r}
+"(kombin(7,6)*kombin(2,1)*kombin(27,7-(6+1))) / kombin(36,7)"<"(kombin(7,6)*kombin(29,7-6)) / kombin(36,7)<(kombin(7,5)*kombin(2,1)*kombin(27,7-(5+1))) / kombin(36,7)<(kombin(7,5)*kombin(29,7-5)) / kombin(36,7)<(kombin(7,4)*kombin(2,1)*kombin(27,7-(4+1))) / kombin(36,7)<(kombin(7,4)*kombin(29,7-4)) / kombin(36,7)<(kombin(7,3)*kombin(29,7-3)) / kombin(36,7)"
+```
+```{r}
+(kombin(7,6)*kombin(2,1)*kombin(27,7-(6+1))) / kombin(36,7)
+(kombin(7,6)*kombin(29,7-6)) / kombin(36,7)
+(kombin(7,5)*kombin(2,1)*kombin(27,7-(5+1))) / kombin(36,7) 
+(kombin(7,5)*kombin(29,7-5)) / kombin(36,7)
+(kombin(7,4)*kombin(2,1)*kombin(27,7-(4+1))) / kombin(36,7)
+(kombin(7,4)*kombin(29,7-4)) / kombin(36,7)
+(kombin(7,3)*kombin(29,7-3)) / kombin(36,7)
+```
+I have both evaluated that the highest price is associated with the lowest probability and when the probability increases the price is decreasing. It can be observed that there is a lower probability of getting x number of winning numbers and the additional numbers, than just the winning numbers. This makes quite good sense the probability of the correct additional numbers is multiplied in the equation. If we look at the result numbers we have to remember that it is a value between 0-1, where 0 indicates no probability of the outcome (it is impossible) and 1 indicates it will happen for sure. There is a very small chance to win in the lottery, even just to have 3 correct winning numbers.
