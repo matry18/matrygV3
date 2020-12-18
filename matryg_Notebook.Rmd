@@ -83,22 +83,73 @@ which(is.na(data1))
 Since the returned value is zero that means that I don't have any missing data in my dataset.  
 
 ### Data visualization  
-In the following I will visualize each variable. For Lung capacity, age and height in meters I have used histograms.
+In the following I will visualize each variable. For Lung capacity, age and height in meters I have used histograms. Since histograms are strongly affected by the number of bins and therefore makes it difficult to determine the shape of the distribution I have added a normal curve to the histograms.  
+Another way of viewing the variables could be with the use of Kernel Density plots. Therefore I have chosen to visualize the lung capacity, age and height in meters with this curve.  
+**Lung capacity**
 ```{r}
 hist(data1$LungCap, las=1, ylim= c(0,120),xlab = "Lung capacity", main= "Histogram of lung capacity")
-hist(data1$Age, xlim = c(0,20), ylim=c(0,140), las=1, xlab = "Age in years", main= "Histogram of age")
-hist(data1$HeightMeter, xlim= c(1,2.3), las=1, xlab = "Height in meter", main= "Histogram of height in meter")
 
+x <- data1$LungCap
+h<-hist(x, breaks=20, col="red", xlab="Lung capacity", las=1, main="Histogram with Normal Curve", ylim = c(0,120), xlim = c(0,15))
+xfit<-seq(min(x),max(x),length=40)
+yfit<-dnorm(xfit,mean=mean(x),sd=sd(x))
+yfit <- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col="blue", lwd=2)
+
+plot(density(data1$LungCap), main = "Kernel Density of lung capacity", xlab = "Lung capacity", las=1)
 ```
-For the categorical variables I first had to convert them into numerical values. For Smoke and Caesarean the original value was "no" or "yes" which I turned into a numerical representation where "yes" = 1 and "no" = 0. For the gender variable the value "male" was set to 1 and the value "female" was set to 0.
+**Age**
+```{r}
+hist(data1$Age, xlim = c(0,20), ylim=c(0,80), las=1, xlab = "Age in years", main= "Histogram of age", breaks = 20)
+
+x <- data1$Age
+h<-hist(x, breaks=20, col="red", xlab="Age in years", las=1, main="Histogram with Normal Curve", ylim = c(0,80), xlim = c(0,20))
+xfit<-seq(min(x),max(x),length=40)
+yfit<-dnorm(xfit,mean=mean(x),sd=sd(x))
+yfit <- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col="blue", lwd=2)
+
+plot(density(data1$Age), main = "Kernel Density of age", xlab = "Age in years", las=1)
+```
+
+**Height in meters**
+```{r}
+hist(data1$HeightMeter, xlim= c(1,2.2), ylim = c(0,100), las=1, xlab = "Height in meter", main= "Histogram of height in meter", breaks = 20)
+
+x <- data1$HeightMeter
+h<-hist(x, breaks=20, col="red", xlab="Height in meter", las=1, main="Histogram with Normal Curve", ylim = c(0,100), xlim = c(1,2.2))
+xfit<-seq(min(x),max(x),length=40)
+yfit<-dnorm(xfit,mean=mean(x),sd=sd(x))
+yfit <- yfit*diff(h$mids[1:2])*length(x)
+lines(xfit, yfit, col="blue", lwd=2)
+
+plot(density(data1$HeightMeter), main = "Kernel Density of height in meter", xlab = "Height in meter", las=1)
+```
+For the categorical variables I first had to convert them into numerical values before they could be visualized. For Smoke and Caesarean the original value was "no" or "yes" which I turned into a numerical representation where "yes" = 1 and "no" = 0. For the gender variable the value "male" was set to 1 and the value "female" was set to 0.
 ```{r}
 data1Num <- data1 %>% mutate(Smoke = case_when(Smoke == "yes" ~ 1, Smoke == "no" ~ 0), Gender = case_when(Gender == "male" ~ 1, Gender == "female" ~ 0), Caesarean = case_when(Caesarean == "yes" ~ 1, Caesarean == "no" ~ 0))
 ```
 After having converted the categorical values they are visualized in a pie chart.
+**Smoke**
 ```{r}
-pie(table(data1Num$Smoke), main= "Distribution of people who smoke.", xlab="0 = do not smoke, 1 = do smoking")
-pie(table(data1Num$Gender), main= "Distribution of gender.", xlab="0 = female, 1 = male")
-pie(table(data1Num$Caesarean), main= "Distribution of people born by caesarean.", xlab="0 = not born by caesarean, 1 = born by caesarean")
+mytable <- table(data1Num$Smoke)
+lbls <- paste(names(mytable), "\n", mytable, sep="")
+pie(mytable, labels = lbls,
+   main="Distribution of people who smoke,\n (with sample sizes)", xlab="0 = do not smoke, 1 = do smoke")
+```
+**Gender**
+```{r}
+mytable <- table(data1Num$Gender)
+lbls <- paste(names(mytable), "\n", mytable, sep="")
+pie(mytable, labels = lbls,
+   main="Distribution of gender,\n (with sample sizes)", xlab="0 = female, 1 = male")
+```
+**Caesarean**
+```{r}
+mytable <- table(data1Num$Smoke)
+lbls <- paste(names(mytable), "\n", mytable, sep="")
+pie(mytable, labels = lbls,
+   main="Distribution of people born by caesarean,\n (with sample sizes)", xlab="0 = not born by caesarean, 1 = born by caesarean")
 ```
 
 
