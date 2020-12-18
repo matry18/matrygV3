@@ -324,10 +324,74 @@ When the values are rounded some details becomes hidden from the central tendenc
 
 ## Linear relationships between variables  
 
-### Numerical variables  
-In the following I will look at the linear regression between different variables. To be able to look at the linear relationship between variables I will first look at the correlation coefficient, first in a correlation matrix and then I will visualize it with a heat map. A heat map relates the numeric value from -1 to 1 into a color code where red represents a value of 1 and blue represents a value of -1. 0 indicates a non-correlation. To make the heat map a bit easier to read I have rounded the numerical value to two decimal numbers.  
+In the following I will select the suitable variables for linear relationships and remove outliers. Then I will compute a correlation matrix and visualize it with a heat map and explain what it shows.  
 
-First the variables has to be selected. I have selected: DOM
+As for variables I have selected lung capacity, age and height in meters since they are not categorical.  
+
+### Removing outliers  
+
+Then I'll remove the outliers in those variables. Often an outlier is an anomaly in the dataset that occurs because of the measurement errors, but also because the experiment being observed experiences momentary but drastic turbulence. The outliers can have a huge impact on the result of a linear regression model. The statistical parameters e.g. mean, standard deviation (SD) and correlation are impacted by outliers. To locate the outliers one can use the IQR as it does not depend on the mean and SD.  
+The IQR is the central 50 % which is the same as the area above the 25th percentile of a distribution and under the 75th percentile of an distribution. A point is defined as an outlier if it is below the 25th or above the 75th percentile by a factor of 1,5 times the IQR. The outliers can be visualized in a box plot, since the box plot shows the median and the 1st and 3rd quartiles.  
+The below box plot is just an example on how to visualize the outliers.  
+```{r}
+boxplot(data1$LungCap, las=1, main= "Boxplot for lung capacity")
+```
+From the above box plot one outlier can be seen. but it can be difficult to read the exact value of the outliers in a box plot. Therefore a statistical method for finding outliers is needed. By using the quantile() function I can find find the 25th and 75th percentile, and by using the IQR() function I can see the difference between the 75th and 25th percentiles.
+```{r}
+# Lung capacity
+Q_lung <- quantile(data1$LungCap, probs = c(0.25, 0.75), na.rm = FALSE)
+iqr_lung <- IQR(data1$LungCap)
+# Age
+Q_age <- quantile(data1$Age, probs = c(0.25, 0.75), na.rm = FALSE)
+iqr_age <- IQR(data1$Age)
+# Height in meter
+Q_heightMeter <- quantile(data1$HeightMeter, probs = c(0.25, 0.75), na.rm = FALSE)
+iqr_heightMeter <- IQR(data1$HeightMeter)
+```
+From the above values I can find the cut-off ranges beyond which all data points are outliers.  
+```{r}
+# Lung capacity
+up_lung <-  Q_lung[2]+1.5*iqr_lung # Upper Range  
+low_lung<- Q_lung[1]-1.5*iqr_lung # Lower Range
+
+# Age
+up_age <-  Q_age[2]+1.5*iqr_age # Upper Range  
+low_age<- Q_age[1]-1.5*iqr_age # Lower Range
+
+# Height in meter
+up_heightMeter <-  Q_heightMeter[2]+1.5*iqr_heightMeter # Upper Range  
+low_heightMeter<- Q_heightMeter[1]-1.5*iqr_heightMeter # Lower Range
+```
+By using the subset() function I can extract the data between the lower and upper, leaving out the outliers.
+
+```{r}
+data2=subset(data1, LungCap > low_lung & LungCap < up_lung & Age > low_age & Age < up_age & HeightMeter > low_heightMeter & HeightMeter < up_heightMeter)
+boxplot(data2$LungCap, las=1, main= "Boxplot for lung capacity")
+```
+When looking at the updated dataset (data2) it has 1 less observation than the old dataset (data1) which means that I only had 1 outlier.
+```{r}
+view(data2)
+```
+### Correlation matrix and visualization  
+In the following I will compute a correlation matrix and visualize it with a heat map.  
+
+A heat map relates the numeric value from -1 to 1 into a color code where red represents a value of 1 and blue represents a value of -1. 0 indicates a non-correlation. To make the heat map a bit easier to read I have rounded the numerical value to two decimal numbers.  
+```{r}
+numVar <- data2 %>% select(LungCap, Age, HeightMeter)
+cor(numVar)
+corMatrix <- round(cor(numVar),2)
+p.mat<-cor_pmat(numVar)
+ggcorrplot(corMatrix,outline.col = "white",  hc.order = TRUE,type = "full",lab = TRUE,p.mat = p.mat)
+```
+From the correlation matrix and the heat map there seems to be a very strong correlation between lung capacity and height in meter since the Pearson's correlation coefficient is 0.91. There is a strong correlation between age and lung capacity (0.82 Pearson's correlation coefficient) as well as between age and height in meter (0.83 Pearson's correlation coefficient). There is a perfect correlation between a variable and itself but that should be excluded and not be looked into.  
+The lung capacity must be the dependent variable, depending on both age and height in meter.  
+
+### Scatter plot - dependent variable vs. independent variable  
+From the above correlation matrix I know that lung capacity is the dependent variable, where age and height in meter is the independent variable. In the following I will create scatter plots for respectively lung capacity vs. age, and lung capacity vs. height in meter.  
+
+
+
+
 
 
 
