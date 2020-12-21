@@ -443,7 +443,7 @@ model2 <- lm(data2$LungCap ~ data2$Age + data2$HeightMeter + data2$Smoke + data2
 summary(model2)
 plot(model2)
 ```
-The two models is close to each other but the multiple R-squared is higher for the model with all the X-variables. Also the residual standard error value is lower for the model with all the X-values. This makes good sense since a model provided with more variables should be able to produce a more correct estimate.  
+The two models is close to each other but the multiple R-squared is higher for the model with all the X-variables. Also the residual standard error value is lower for the model with all the X-values. This makes good sense since a model provided with more data points should be able to produce a more correct estimate.  
 
 # Stage 5 - Training and testing regression model  
 
@@ -451,25 +451,43 @@ In the following I will first split my dataset into a training and testing model
 
 ## Splitting the dataset  
 In the following I will split my dataset into a training and testing set. The training set is used for training the model for predicting values and the testing set is used to test how well the model actually predicts the actual values in the testing set. It is worth to understand that the predicted value in the testing set has not been shown to the model before.  
-I am splitting my dataset randomly into the training set which will consist of 80 % of the original dataset and the last 20 % will be the testing set. it's important to never ever train on the testing data set since it will skew the results and introduce bias into the results.  
+I am splitting my dataset randomly into the training set which will consist of 80 % of the original dataset and the last 20 % will be the testing set. It's important to never ever train on the testing data set since it will skew the results and introduce bias into the results.  
 ```{r}
 split = sample.split(data2$LungCap, SplitRatio = 0.8)
+training_set = subset(data2, split == TRUE)
+test_set = subset(data2, split == FALSE)
 ```
+The training set contains 614 observations and the test set contains 110 observations. Due to rounding errors the training set is 0.8480663 % of the whole dataset and the testing set is 0.1519337 % of the whole dataset.  
 
+## Training the model  
+In the following I will train different regression models on the training set. I will at first train a model with one parameter and thereafter a model with multiple parameters.  
+```{r}
+cor(training_set$LungCap,training_set$HeightMeter)
+train_mod <- lm(training_set$LungCap ~ training_set$HeightMeter)
+summary(train_mod)
+plot(training_set$HeightMeter, training_set$LungCap, main ="Scatterplot: Lung capacity vs. height in meter - training set", ylab = "Lung capacity", xlab = "Height in meter", las=1, xlim=c(1.1,2.1), ylim=c(0,15))
+abline(train_mod, col=2, lwd=3)
+plot(train_mod$residuals, col="blue", lwd=2, ylab="Residuals", las=1, main = "Scatterplot for residuals - training set")
+abline(h=0)
+```
+When I look at the correlation coefficient between lung capacity and height in meter there seems to be a very strong correlation. The scatterplot indicates a strong linear relationship between the lung capacity and the height in meter. The scatterplot for the residuals also show how the residuals are randomly distributed. The residual standard error is 1.108 which in a moment will be compared with an other linear regression model.  
 
+Now I will train a regression model with multiple variables as both height in meter and age.
+```{r}
+train_model1 <- lm(training_set$LungCap ~ training_set$Age + training_set$HeightMeter)
+summary(train_model1)
+plot(train_model1)
+```
+From the above linear model based on multiple variables the main point for now is to look at the residual standard error, which is 1.08. This will be discussed in a moment after having trained the last linear model with multiple variables which will be age, height in meter, smoke, gender and caesarean.
+```{r}
+train_model2 <- lm(training_set$LungCap ~ training_set$Age + training_set$HeightMeter + training_set$Smoke + training_set$Gender + training_set$Caesarean)
+summary(train_model2)
+plot(train_model2)
+```
+For the last model with multiple variables the residual standard error is 1.04. Compared with the other two models based on the training set, this model has the lowest error. Then follows the other model with multiple variables (train_model1) and at last comes the model with a single parameter.  
 
-
-
-
-
-
-
-
-
-
-
-Evaluere:
-To assess my model performance on unseen data that's why I train on the training data set and then I use a subset of that data which is the testing data set. If the model is not tested and is made such that it performs good only on that whole training data set, then the parameters will be tuned in a way that they are only good enough to predict the value for the data which was in the training data set, and that is not generically applicable to any other data sets that I want to carry the model over to, so that is called overfitting. I want to avoid overfitting and underfitting my model.
+## Testing the model  
+In the following I will test my models and evaluate how well they perform. To assess my models performance on unseen data that's why I train on the training data set and then I use a subset of that data which is the testing data set. If the model is not tested and is made such that it performs good only on that whole training data set, then the parameters will be tuned in a way that they are only good enough to predict the value for the data which was in the training data set, and that is not generically applicable to any other data sets that I want to carry the model over to and that is called overfitting. I want to avoid overfitting and underfitting my models.  
 
 
 
