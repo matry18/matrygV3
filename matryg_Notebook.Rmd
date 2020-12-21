@@ -39,6 +39,7 @@ library(tseries)
 library(forecast)
 library(MLmetrics)
 library(MASS)
+library(caTools)
 #Visualisation 
 library(corrplot)
 library(plotly)
@@ -446,10 +447,29 @@ The two models is close to each other but the multiple R-squared is higher for t
 
 # Stage 5 - Training and testing regression model  
 
-## 
+In the following I will first split my dataset into a training and testing model. I will train my regression model on the training set and then I will test my model on the training set and evaluate my model for how well it is to predict unknown (future) values.  
+
+## Splitting the dataset  
+In the following I will split my dataset into a training and testing set. The training set is used for training the model for predicting values and the testing set is used to test how well the model actually predicts the actual values in the testing set. It is worth to understand that the predicted value in the testing set has not been shown to the model before.  
+I am splitting my dataset randomly into the training set which will consist of 80 % of the original dataset and the last 20 % will be the testing set. it's important to never ever train on the testing data set since it will skew the results and introduce bias into the results.  
+```{r}
+split = sample.split(data2$LungCap, SplitRatio = 0.8)
+```
 
 
 
+
+
+
+
+
+
+
+
+
+
+Evaluere:
+To assess my model performance on unseen data that's why I train on the training data set and then I use a subset of that data which is the testing data set. If the model is not tested and is made such that it performs good only on that whole training data set, then the parameters will be tuned in a way that they are only good enough to predict the value for the data which was in the training data set, and that is not generically applicable to any other data sets that I want to carry the model over to, so that is called overfitting. I want to avoid overfitting and underfitting my model.
 
 
 
