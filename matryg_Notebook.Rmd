@@ -470,7 +470,7 @@ abline(train_mod, col=2, lwd=3)
 plot(train_mod$residuals, col="blue", lwd=2, ylab="Residuals", las=1, main = "Scatterplot for residuals - training set")
 abline(h=0)
 ```
-When I look at the correlation coefficient between lung capacity and height in meter there seems to be a very strong correlation. The scatterplot indicates a strong linear relationship between the lung capacity and the height in meter. The scatterplot for the residuals also show how the residuals are randomly distributed. The residual standard error is 1.108 which in a moment will be compared with an other linear regression model.  
+When I look at the correlation coefficient between lung capacity and height in meter there seems to be a very strong correlation. The scatterplot indicates a strong linear relationship between the lung capacity and the height in meter. The scatterplot for the residuals also show how the residuals are randomly distributed. The residual standard error is 1.108 and the R-squared is 0.8362 which is approx 84 % which in a moment will be compared with an other linear regression model.  
 
 Now I will train a regression model with multiple variables as both height in meter and age.
 ```{r}
@@ -478,16 +478,65 @@ train_model1 <- lm(training_set$LungCap ~ training_set$Age + training_set$Height
 summary(train_model1)
 plot(train_model1)
 ```
-From the above linear model based on multiple variables the main point for now is to look at the residual standard error, which is 1.08. This will be discussed in a moment after having trained the last linear model with multiple variables which will be age, height in meter, smoke, gender and caesarean.
+From the above linear model based on multiple variables the main point for now is to look at the residual standard error, which is 1.08 and the R-squared is 0.8444 which is approx 84 %. This will be discussed in a moment after having trained the last linear model with multiple variables which will be age, height in meter, smoke, gender and caesarean.
 ```{r}
 train_model2 <- lm(training_set$LungCap ~ training_set$Age + training_set$HeightMeter + training_set$Smoke + training_set$Gender + training_set$Caesarean)
 summary(train_model2)
 plot(train_model2)
 ```
-For the last model with multiple variables the residual standard error is 1.04. Compared with the other two models based on the training set, this model has the lowest error. Then follows the other model with multiple variables (train_model1) and at last comes the model with a single parameter.  
+For the last model with multiple variables the residual standard error is 1.04 and the R-squared is 0.8565 which is approx. 86 %. Compared with the other two models based on the training set, this model has the lowest error and highest percentage of R-squared which means that it explains 86 % of the dependent variable variation. Then follows the other model with multiple variables (train_model1) and at last comes the model with a single parameter.  
+From now on I will refer to the first model - the one with height in meter as x-variable, as model 1. I will refer to the second model - the one with height in meter and age as x-variables, as model 2. And I will refer to the last model - the one with all possible x-variables, as model 3. Please note that the models will not be renamed in the code, but model 1 = mod, model 2 = model1 and model 3 = model2.  
 
 ## Testing the model  
 In the following I will test my models and evaluate how well they perform. To assess my models performance on unseen data that's why I train on the training data set and then I use a subset of that data which is the testing data set. If the model is not tested and is made such that it performs good only on that whole training data set, then the parameters will be tuned in a way that they are only good enough to predict the value for the data which was in the training data set, and that is not generically applicable to any other data sets that I want to carry the model over to and that is called overfitting. I want to avoid overfitting and underfitting my models.  
+I will use RMSE (root mean squared error) to evaluate my models. When I use my models I will be able to compare the predicted values to actual values. In the following I am creating a new dataset based on the training set and I have added a column for each of the models with the predicted value for lung capacity.
+```{r}
+# model 1
+lungCap_mod_rmse_train <- training_set %>%
+   mutate(predRegModTrain = predict(train_mod))
+# model 2
+lungCap_mod_rmse_train$predRegModel1Train = predict(train_model1)
+# model 3
+lungCap_mod_rmse_train$predRegModel2Train = predict(train_model2)
+```
+The I will look at the actual values plotted against the predicted values.
+```{r}
+plot(lungCap_mod_rmse_train$LungCap, lungCap_mod_rmse_train$predRegModTrain, las=1, main="Scatterplot - actual values vs. predicted values\n - model 1", ylab="Predicted value", xlab="Actual value")
+
+plot(lungCap_mod_rmse_train$LungCap, lungCap_mod_rmse_train$predRegModel1Train, las=1, main="Scatterplot - actual values vs. predicted values\n - model 2", ylab="Predicted value", xlab="Actual value")
+
+plot(lungCap_mod_rmse_train$LungCap, lungCap_mod_rmse_train$predRegModel2Train, las=1, main="Scatterplot - actual values vs. predicted values\n - model 3", ylab="Predicted value", xlab="Actual value")
+```
+All of the models shows a positive linear relationship between the actual values and predicted values. There don't seems to be any outliers. The correlation shows that when an actual value increase so does the predicted one. When comparing the three scatterplots it is possible to observe that models with more X-variables is more dense than models with a lesser number of x-variables.  
+
+Now I will create the mean squared error for each model.
+```{r}
+# model 1
+mse_mod <- lungCap_mod_rmse_train %>% mutate(errorMod = predRegModTrain - LungCap, sqrErrorMod = errorMod^2) %>% summarise(mse_mod = mean(sqrErrorMod))
+# model 2
+mse_model1 <- lungCap_mod_rmse_train %>% mutate(errorModel1 = predRegModel1Train - LungCap, sqrErrorModel1 = errorModel1^2) %>% summarise(mse_model1 = mean(sqrErrorModel1))
+# model 3
+mse_model2 <- lungCap_mod_rmse_train %>% mutate(errorModel2 = predRegModel2Train - LungCap, sqrErrorModel2 = errorModel2^2) %>% summarise(mse_model2 = mean(sqrErrorModel2))
+
+print(paste0("Mean squared error for model 1: ",mse_mod))
+print(paste0("Mean squared error for model 2: ",mse_model1))
+print(paste0("Mean squared error for model 3: ",mse_model2))
+```
+In the above code chunk I first calculate the error which is the predicted value minus the actual value for each model. The sum of the errors for each model sums to zero since some of the values are positive and some of the values are negative and the average mean would be zero. By squaring the errors all the values becomes positive and then I find the average of that. When summarizing I take the mean of the squared error. To get back into my the original scale I need to take the square root of the mean squared error, which I do in the following.
+```{r}
+# Model 1
+RMSE_model1 <- sqrt(mse_mod)
+print(paste0("RMSE for model 1: ", RMSE_model1))
+# Model 1
+RMSE_model2 <- sqrt(mse_model1)
+print(paste0("RMSE for model 2: ", RMSE_model2))
+# Model 1
+RMSE_model3 <- sqrt(mse_model2)
+print(paste0("RMSE for model 3: ", RMSE_model3))
+
+```
+All RMSE values shows a pretty fine average error which is just above approx. 7 %. This RMSE value was for the training set, so I will also have to look into the testing set. Remember that the models have not seen the data in the test set and if the model is good I should get a RMSE value for each value that is close to the RMSE value from the training set.
+
 
 
 
