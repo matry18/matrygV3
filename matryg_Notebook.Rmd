@@ -530,13 +530,13 @@ In the above code chunk I first calculate the error which is the predicted value
 ```{r}
 # Model 1
 RMSE_model1 <- sqrt(mse_model1)
-print(paste0("RMSE for model 1 (train): ", RMSE_model1))
+print(paste0("RMSE for model 1 (training): ", RMSE_model1))
 # Model 2
 RMSE_model2 <- sqrt(mse_model2)
-print(paste0("RMSE for model 2 (train): ", RMSE_model2))
+print(paste0("RMSE for model 2 (training): ", RMSE_model2))
 # Model 3
 RMSE_model3 <- sqrt(mse_model3)
-print(paste0("RMSE for model 3 (train): ", RMSE_model3))
+print(paste0("RMSE for model 3 (training): ", RMSE_model3))
 ```
 All RMSE values shows a pretty fine average error and they are between 7-11 %. The RMSE values was for the training set, so I will also have to look into the testing set. Remember that the models have not seen the data in the test set and if the model is good I should get a RMSE value for each model that is close to the RMSE value from the training set.
 
@@ -559,7 +559,9 @@ To get the error I took the predicted value and subtracted the actual value. The
 
 Now it is time to compare the RMSE value for each model on the test and training set.
 ```{r}
-diff_model1 <- RMSE_model1-reg_rmse_test_model1
+diff_model1 <- RMSE_model1 - reg_rmse_test_model1
+diff_model2 <- RMSE_model2 - reg_rmse_test_model2
+diff_model3 <- RMSE_model3 - reg_rmse_test_model3
 print(paste0("The difference between training and test RMSE value on model 1: ",abs(diff_model1)))
 print(paste0("The difference between training and test RMSE value on model 2: ",abs(diff_model2)))
 print(paste0("The difference between training and test RMSE value on model 3: ",abs(diff_model3)))
