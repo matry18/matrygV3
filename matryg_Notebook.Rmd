@@ -530,13 +530,13 @@ In the above code chunk I first calculate the error which is the predicted value
 ```{r}
 # Model 1
 RMSE_model1 <- sqrt(mse_model1)
-print(paste0("RMSE for model 1: ", RMSE_model1))
+print(paste0("RMSE for model 1 (train): ", RMSE_model1))
 # Model 2
 RMSE_model2 <- sqrt(mse_model2)
-print(paste0("RMSE for model 2: ", RMSE_model2))
+print(paste0("RMSE for model 2 (train): ", RMSE_model2))
 # Model 3
 RMSE_model3 <- sqrt(mse_model3)
-print(paste0("RMSE for model 3: ", RMSE_model3))
+print(paste0("RMSE for model 3 (train): ", RMSE_model3))
 ```
 All RMSE values shows a pretty fine average error and they are between 7-11 %. The RMSE values was for the training set, so I will also have to look into the testing set. Remember that the models have not seen the data in the test set and if the model is good I should get a RMSE value for each model that is close to the RMSE value from the training set.
 
@@ -565,6 +565,7 @@ print(paste0("The difference between training and test RMSE value on model 2: ",
 print(paste0("The difference between training and test RMSE value on model 3: ",abs(diff_model3)))
 ```
 When looking at the difference in RMSE value all three models have a very small difference value. That means that the models performs well on both the training and the test set. So the models could be used on other unseen data sets to predict the lung capacity. Model 2 has the largest difference between the RMSE values for test and training set. After that follows model 1. Model 3 has the lowest difference and would therefor be the best model to use on unseen dataset. Model 2 has a larger difference than model 1 which could be explained by an overfitting of the model. However it has to be noted that even model 2 has a very small difference between the training and test set.  
+The RMSE value is good if needed to adjust for large, rare errors.  
 
 ### MAE  
 
@@ -591,10 +592,87 @@ print(paste0("The difference between training and test MAE value on model 3: ",a
 ```
 The absolute error is the absolute value of the difference between the forecasted value and the actual value. MAE tells how big of an error to expect from the forecast on average.^[From https://canworksmart.com/using-mean-absolute-error-forecast-accuracy/, seen 22/12-20.] 
 The difference between the MAE value on training and test set is fairly small. Model 3 has the smallest difference, followed by model 2 and then model 1. Again model 3 would be the preferred model to use on unseen data sets, but the other models would be acceptable as well.  
+Since model 1 has a MEA value on the test set of 1.26 it will overestimate the value when it is forecasting a value. Model 2 has a MAE value of 0.80 and model 3 has a MAE value of 0.81. Model 3 would be the prefered model to use, but the difference between model 3 and model 2 is fairly small.  
 
 ### MAPE  
 
+One problem with the MAE is that the relative size of the error is not always obvious. Sometimes it is hard to tell a big error from a small error. To deal with this problem, I can find the mean absolute error in percentage terms. Mean Absolute Percentage Error (MAPE) allows me to compare forecasts of different series in different scales.^[From https://canworksmart.com/using-mean-absolute-error-forecast-accuracy/, seen 22/12-20.]  
+In the following I will compute the MAPE. This is done by finding the error by subtracting the predicted value from the actual value. Then I find the absolute value of the error and divide it by the actual value and multiply it with 100. I sum up all the absolute errors in percent and divide them by the number of rows, which will give me the average in percentage.  
+I do this for each model on both the training and testing set.
+```{r}
+# model 1 train
+actual <- train$LungCap
+predicted <- lungCap_mod_rmse_train$predModel1Train
+error <- actual - predicted
+absolute_error <- abs(error)
+absolute_persent_error <- absolute_error / actual * 100
+sum_of_column <- sum(absolute_persent_error)
+num_of_rows <- 580
+mape_model1_train <- sum_of_column/num_of_rows
+print(paste0("The MAPE in percentage for model 1 on the training set is: ", mape_model1_train))
 
+# model 1 test
+actual <- test$LungCap
+predicted <- pred_reg_test_model1
+error <- actual - predicted
+absolute_error <- abs(error)
+absolute_persent_error <- absolute_error / actual * 100
+sum_of_column <- sum(absolute_persent_error)
+num_of_rows <- 144
+mape_model1_test <- sum_of_column/num_of_rows
+print(paste0("The MAPE in percentage for model 1 on the test set is: ", mape_model1_test))
+print(paste0("The difference between the MAPE value on test and training set for model 1 is ", abs(mape_model1_train - mape_model1_test)))
+
+# model 2 train
+actual <- train$LungCap
+predicted <- lungCap_mod_rmse_train$predModel2Train
+error <- actual - predicted
+absolute_error <- abs(error)
+absolute_persent_error <- absolute_error / actual * 100
+sum_of_column <- sum(absolute_persent_error)
+num_of_rows <- 580
+mape_model2_train <- sum_of_column/num_of_rows
+print(paste0("The MAPE in percentage for model 2 on the training set is: ", mape_model2_train))
+
+# model 2 test
+actual <- test$LungCap
+predicted <- pred_reg_test_model2
+error <- actual - predicted
+absolute_error <- abs(error)
+absolute_persent_error <- absolute_error / actual * 100
+sum_of_column <- sum(absolute_persent_error)
+num_of_rows <- 144
+mape_model2_test <- sum_of_column/num_of_rows
+print(paste0("The MAPE in percentage for model 2 on the test set is: ", mape_model2_test))
+print(paste0("The difference between the MAPE value on test and training set for model 2 is ", abs(mape_model2_train - mape_model2_test)))
+
+# model 3 train
+actual <- train$LungCap
+predicted <- lungCap_mod_rmse_train$predModel3Train
+error <- actual - predicted
+absolute_error <- abs(error)
+absolute_persent_error <- absolute_error / actual * 100
+sum_of_column <- sum(absolute_persent_error)
+num_of_rows <- 580
+mape_model3_train <- sum_of_column/num_of_rows
+print(paste0("The MAPE in percentage for model 3 on the training set is: ", mape_model3_train))
+
+# model 3 test
+actual <- test$LungCap
+predicted <- pred_reg_test_model3
+error <- actual - predicted
+absolute_error <- abs(error)
+absolute_persent_error <- absolute_error / actual * 100
+sum_of_column <- sum(absolute_persent_error)
+num_of_rows <- 144
+mape_model3_test <- sum_of_column/num_of_rows
+print(paste0("The MAPE in percentage for model 3 on the test set is: ", mape_model3_test))
+print(paste0("The difference between the MAPE value on test and training set for model 3 is ", abs(mape_model3_train - mape_model3_test)))
+```
+From the difference in MAPE value on test and training set I can conclude that for all three models the difference is very small. Model 1 had the largest difference with 1.26 %, followed by model 2 with 0.46 % and finally model 3 with the smallest difference between the test and training values with 0.02 %. When all three models have such low difference I can without bigger harm use any of the three models on other unseen data sets.  
+
+But just because a model has a small difference between the training and test set does not mean that the model itself is accurate. For this I can look at the MAPE value. Model 1 has a MAPE value on the test set for 21.17 %. Model 2 had 12.78 % and model 3 had 13.00 %. Looking at these values the model 2 would be the preferred model to use to forecast values, since it has the smallest size of error.  
+As a general remark model 2 and model 3 tends to be able to produce the same output on an unseen data set. Both models would be advisable to use, depending on what kind of errors one would like to adjust for. Model 1 seems to perform with a lower quality than model 2 and model 3.  
 
 # Lottery - Stage 4
 
