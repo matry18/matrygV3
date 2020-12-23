@@ -5,3 +5,4 @@ Due to problems witht the original chosen dataset, a new dataset was chosen and 
 A second dataset was chosen and the repository for this was created the 17/12-20.  
 
 To read the report select the file "matryg_Notebook.html" and open it in your browser. Since the file is too big to read directly in GitHub you have to save the file to your desktop and then open the saved file in your browser.  
+If that is too much trouble for you then you can view the .PDF-file "Matryg_Report.pdf", but this is just a pdf-file generated as an print of the .html-file which is not so nice to look at. You should go with the .html-version.
