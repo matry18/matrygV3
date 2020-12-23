@@ -1,6 +1,10 @@
 ---
 title: "ICY0006 - Probability Theory and Statistics - Matryg project, TalTech"
-output: html_notebook
+#output: html_notebook
+output:
+   html_document:
+      toc: true
+      theme: united
 ---
 
 # Stage 1  
@@ -14,13 +18,13 @@ Enjoy the reading!
 
 ## The work environment  
 For this project I have used RStudio as my IDE. I have used version control with Git and continuously committed my work to GitHub, where the repository is public accessible.  
-I have used the Notebook function in RStudio to generate the matryg_Notebook.Rmd-file from where a html-file can be generated and read as the report for this project.  
-The development of the report was an ongoing process following the progression of the course and continuous implementing the topics thought in the lecture and practices.  
+I have used the Notebook function in RStudio to generate the matryg_Notebook.Rmd-file from where a .html-file was generated and can be read as the report for this project.   
+The development of the report was an ongoing process following the progression of the course and continuous implementing the topics taught in the lecture and practices.  
 
 ## The dataset  
-The original dataset for this project was based on house prices and computer generated. This caused some issues since the dataset was not suitable due to the certain problem. Because of that the dataset was changed 4 weeks into the course. Doing the 8th week of the course I faced some problems with all the possible linear regressions in the dataset being heteroscedastic. This lead to another change of the dataset. Therefore this dataset is version 3 in my project.  
+The original dataset for this project was based on house prices and computer generated. This caused some issues since the dataset was not suitable due to a certain problem. Because of that the dataset was changed 4 weeks into the course. Doing the 8th week of the course I faced some problems with all the possible linear regressions in the dataset being heteroscedastic. This lead to another change of the dataset. Therefore this dataset is version 3 in my project.  
 
-This dataset is about lung capacity and is public available at https://www.kaggle.com/aakashmisra/lung-capacity with an unknown license. The version of the dataset is Version 1 and was created the 28/9 2020 by the user Aakash Misra - https://www.kaggle.com/aakashmisra  
+This dataset is about lung capacity and is public available at https://www.kaggle.com/aakashmisra/lung-capacity with an unknown (public) license. The version of the dataset is version 1 and was created the 28/9 2020 by the user Aakash Misra - https://www.kaggle.com/aakashmisra  
 The dataset is a .csv-file and I downloaded it and unzipped it before importing it. When doing the importing of the dataset I used a dynamic file.choose() method where I chose the downloaded and unzipped file.  
 ```{r}
 data1 <- read.csv(file.choose(), header=TRUE)
@@ -28,7 +32,7 @@ View(data1)
 attach(data1)
 ```
 
-To be able to manipulate and visualize the dataset the libraries and dependencies was loaded.
+To be able to manipulate and visualize the data set the following libraries and dependencies was loaded.
 ```{r}
 ##Data Manipulation
 library(tidyverse)
@@ -56,8 +60,8 @@ library(ggstatsplot)
 ```
 
 ## Variables  
-In the following I will describe the variables in the dataset.  
-The dataset consists of 725 observations and has 6 variables.  
+In the following I will describe the variables in the data set.  
+The data set consists of 725 observations and has 6 variables.  
 
 **LungCap** is short for lung capacity also know as total lung capacity (TLC). Lung capacity is the volume of air in the lungs upon the maximum effort of inspiration.  Among healthy adults, the average lung capacity is about 6 liters. Age, gender, body composition, and ethnicity are factors affecting the different ranges of lung capacity among individuals. TLC rapid increases from birth to adolescence and plateaus at around 25 years old. Males tend to have a greater TLC than females, while individuals with tall stature tend to have greater TLC than those with short stature, and individuals with a high waist-to-hip ratio generally have a lower TLC. Individuals of African descent have a lower TLC compared to individuals of European descent. Additional factors that affect an individual's lung capacity include the level of physical activity, chest wall deformities, and respiratory diseases.^[From https://www.ncbi.nlm.nih.gov/books/NBK541029/, seen 17/12-20.]  
 The lung capacity is a dependent variable since it is influenced by age, gender etc. It is a continuous value as well as quantitative. It is measured on an interval scale.  
@@ -77,7 +81,7 @@ The **Smoke** variable is independent, discrete and qualitative. It defines if t
 The **Caesarean** indicates how the person was born. If the person was born by caesarean the value is "yes" and if not the value is "no". This is an independent, discrete, qualitative variable measured on a nominal scale. As an alternative the true/false-value could have been indicated with numbers, where 1 is true and 0 is false, but for now I will not manipulate the value.  
 
 ### Missing data
-Before going any further with the dataset I will check for any missing values by the use of the inbuilt function in R Studio.
+Before going any further with the dataset I will check for any missing values by the use of the inbuilt function in RStudio.
 ```{r}
 which(is.na(data1))
 ```
@@ -126,7 +130,8 @@ lines(xfit, yfit, col="blue", lwd=2)
 
 plot(density(data1$HeightMeter), main = "Kernel Density of height in meter", xlab = "Height in meter", las=1)
 ```
-In the following I will visualize the categorial variables with pie chart since it makes a good overview.  
+  
+In the following I will visualize the categorical variables with pie charts since it makes a good overview.  
 
 **Smoke**
 ```{r}
@@ -135,21 +140,25 @@ lbls <- paste(names(smoke.count), "\n", smoke.count, sep="")
 pie(smoke.count,border=T, labels = lbls,
    main="Distribution of people who smoke,\n (with sample sizes)")
 ```
-**Gender**
+  
+**Gender**  
 ```{r}
 gender.count<-table(data1$Gender)
 lbls <- paste(names(gender.count), "\n", gender.count, sep="")
 pie(gender.count,border=T, labels = lbls,
    main="Distribution of gender,\n (with sample sizes)")
 ```
-**Caesarean**
+  
+**Caesarean**  
 ```{r}
 caesarean.count<-table(data1$Caesarean)
 lbls <- paste(names(caesarean.count), "\n", caesarean.count, sep="")
 pie(caesarean.count,border=T, labels = lbls,
    main="Distribution of people born by caesarean,\n (with sample sizes)")
 ```
+  
 ### Interpreting the visualization  
+
 In the following I will describe what can be seen from the graphs and charts.  
 
 The lung capacity has a nice bell shape, which indicates a normal distribution. The distribution is very close to be complete symmetrical with a single peek.  
@@ -162,7 +171,7 @@ The distribution of people born by ceasarean shows that nearly 1/4 of the popula
 # Stage 2  
 ## Quantitative overview of data  
 
-In the following we will compute the central tendency, also known as measure of central tendency or average. Basically this is the central value for a probability distribution. I will also compute the variability measures which is how "spread out" the data is. Then I will do a short analysis of the central tendencies and variability measures and compare the outcome with the visual representation of the distributions.  
+In the following I will compute the central tendency, also known as measure of central tendency or average. Basically this is the central value for a probability distribution. I will also compute the variability measures which is how "spread out" the data is. Then I will do a short analysis of the central tendencies and variability measures and compare the outcome with the visual representation of the distributions.  
 
 ### Central tendency measures  
 
@@ -180,7 +189,7 @@ print(lungCap.mean)
 age.mean <- mean(data1$Age)
 print(age.mean)
 ```
-Since the age variable is discrete I will have to round of the mean value to not have a decimal number.
+Since the age variable is discrete I will have to round off the mean value to not have a decimal number.
 ```{r}
 print(round(age.mean))
 ```
@@ -199,7 +208,7 @@ mean(data1$LungCap, trim = 0.2)
 ```{r}
 mean(data1$Age, trim = 0.2)
 ```
-And since age is a discrete variable it will have to be rounded of.
+And since age is a discrete variable it will have to be rounded off.
 ```{r}
 round(mean(data1$Age, trim = 0.2))
 ```
@@ -314,11 +323,11 @@ The mean and trimmed mean is very close to each other which indicates that no ma
 The mean and trimmed mean is actually really close to each other but when the value is rounded off the difference increases but the two values (12 and 13) is still close to each other. From this I can deduce that there is not many data points in the outer 10 % of the lower and upper part of the distribution. The mean and median is also very close to each other so the balance of the distribution is in the center of the distribution. The mode value is equal to the trimmed mean and median which indicates a normal distribution which can be confirmed by the visual representation of the histogram and density curve. Since the mean value is smaller than the median value a small negative skew can be seen. The central tendency values and the visual representation corresponds very well with each other. The youngest person in the population is 3 years old and the oldest is 19 years old. The IQR value of 6 indicates that the central 50 % of the data is spread out among those 6 years. The SD value of 4 indicate how far from the mean value that the data is spread out. The value indicates that there is some spread among the observations for this variable but nothing of big concern. The variability measures correspons very well with the visual representation of the distribution.  
 
 #### Height in meter  
-The mean and trimmed mean is almost identical so no crucial data points is located in the outer 10 % of the scale for this variable. The same goes for the mode value which is identical with the medial value. This indicates a symmetric distribution and when looking at the visual representation of the distribution this corresponds very well with the values. The shortest person in the observations is 1.15062 meter and the tallest person is 2.07772 meter. The IQR value of 0.26416 indicates that the central 50 % of the data is not that wide spread out. The SD value (0.1829345) is relatively small and indicates that the data for this variable is not that wide spread out. The variability measures corresponds very well with the graphical representation of the distribution.  
+The mean and trimmed mean is almost identical so no crucial data points is located in the outer 10 % of the scale for this variable. The same goes for the mode value which is identical with the median value. This indicates a symmetric distribution and when looking at the visual representation of the distribution this corresponds very well with the values. The shortest person in the observations is 1.15062 meter and the tallest person is 2.07772 meter. The IQR value of 0.26416 indicates that the central 50 % of the data is not that wide spread out. The SD value (0.1829345) is relatively small and indicates that the data for this variable is not that wide spread out. The variability measures corresponds very well with the graphical representation of the distribution.  
 
-I have chosen to leave out some of the variables when it did not add any value to the project to analyze variables such as true-false variables and other categorical variables.  
+I have chosen to leave out the categorical variables since it did not add any value to the project to analyze these.  
 
-I general the graphical representation gives the same impression as the values of central tendency measures and variability measures. However it can be difficult to read the exact values from the graphical representation and the central tendency measures and variability measures helps to understand the exact values.  
+In general the graphical representation gives the same impression as the values of central tendency measures and variability measures. However it can be difficult to read the exact values from the graphical representation and the central tendency measures and variability measures helps to understand the exact values.  
 When the values are rounded some details becomes hidden from the central tendency measures. The data representation can either be in numeric form or visual form depending on how you want to present the data and with what purpose. Usually it is easier to get an overview from the visual representation but the details is easier seen in the numerical representation of the data.  
 
 # Stage 3
@@ -331,13 +340,14 @@ As for variables I have selected lung capacity, age and height in meters since t
 
 ### Removing outliers  
 
-Then I'll remove the outliers in those variables. Often an outlier is an anomaly in the dataset that occurs because of the measurement errors, but also because the experiment being observed experiences momentary but drastic turbulence. The outliers can have a huge impact on the result of a linear regression model. The statistical parameters e.g. mean, standard deviation (SD) and correlation are impacted by outliers. To locate the outliers one can use the IQR as it does not depend on the mean and SD.  
+Before I proceed with the linear relationship I will look into potential outliers. Often an outlier is an anomaly in the dataset that occurs because of the measurement errors, but also because the experiment being observed experiences momentary but drastic turbulence. The outliers can have a huge impact on the result of a linear regression model. The statistical parameters e.g. mean, standard deviation (SD) and correlation are impacted by outliers.^[From https://www.r-bloggers.com/2020/01/how-to-remove-outliers-in-r/, seen 23/12-20.] To locate the outliers I will use the IQR as it does not depend on the mean and SD.  
 The IQR is the central 50 % which is the same as the area above the 25th percentile of a distribution and under the 75th percentile of an distribution. A point is defined as an outlier if it is below the 25th or above the 75th percentile by a factor of 1,5 times the IQR. The outliers can be visualized in a boxplot, since the boxplot shows the median and the 1st and 3rd quartiles.  
 The below boxplot is just an example on how to visualize the outliers.  
 ```{r}
 boxplot(data1$LungCap, las=1, main= "Boxplot for lung capacity")
 ```
-From the above boxplot one outlier can be seen. but it can be difficult to read the exact value of the outliers in a boxplot. Therefore a statistical method for finding outliers is needed. By using the quantile() function I can find find the 25th and 75th percentile, and by using the IQR() function I can see the difference between the 75th and 25th percentiles.
+  
+From the above boxplot one outlier can be seen. but it can be difficult to read the exact value of the outlier in a boxplot. Therefore a statistical method for finding outliers is needed. By using the quantile() function I can find find the 25th and 75th percentile, and by using the IQR() function I can see the difference between the 75th and 25th percentiles.
 ```{r}
 # Lung capacity
 Q_lung <- quantile(data1$LungCap, probs = c(0.25, 0.75), na.rm = FALSE)
@@ -369,9 +379,10 @@ By using the subset() function I can extract the data between the lower and uppe
 data2=subset(data1, LungCap > low_lung & LungCap < up_lung & Age > low_age & Age < up_age & HeightMeter > low_heightMeter & HeightMeter < up_heightMeter)
 boxplot(data2$LungCap, las=1, main= "Boxplot for lung capacity")
 ```
-When looking at the updated dataset (data2) it has 1 less observation than the old dataset (data1) which means that I only had 1 outlier.
+  
+When looking at the updated dataset (data2) it has 1 less observation than the old dataset (data1) which means that I only had 1 outlier.  
 ```{r}
-view(data2)
+str(data2)
 ```
 ### Correlation matrix and visualization  
 In the following I will compute a correlation matrix and visualize it with a heat map.  
@@ -384,6 +395,7 @@ corMatrix <- round(cor(numVar),2)
 p.mat<-cor_pmat(numVar)
 ggcorrplot(corMatrix,outline.col = "white",  hc.order = TRUE,type = "full",lab = TRUE,p.mat = p.mat)
 ```
+  
 From the correlation matrix and the heat map there seems to be a very strong correlation between lung capacity and height in meter since the Pearson's correlation coefficient is 0.91. There is a strong correlation between age and lung capacity (0.82 Pearson's correlation coefficient) as well as between age and height in meter (0.83 Pearson's correlation coefficient). There is a perfect correlation between a variable and itself but that should be excluded and not be looked into.  
 The lung capacity must be the dependent variable, depending on both age and height in meter.  
 
@@ -394,12 +406,14 @@ From the above correlation matrix I know that lung capacity is the dependent var
 ```{r}
 plot(data2$Age, data2$LungCap, main ="Scatterplot: Lung capacity vs. age", ylab = "Lung capacity", xlab = "Age in years", las=1, xlim=c(0,20), ylim=c(0,15))
 ```
+  
 From the scatterplot I can see a strong relationship between age and lung capacity. The higher the age value the higher the lung capacity value. The two variables has a positive association. I can also observe a linear relationship since the points clusters along a straight (wide) line. The scatterplot shows homoscedasticity since all the random variables have the same finite variance. From the scatterplot it is visible that the age variable is discrete since all the points forms a vertical "line".  
 
 **Lung capacity vs. height in meter**  
 ```{r}
 plot(data2$HeightMeter, data2$LungCap, main ="Scatterplot: Lung capacity vs. height in meter", ylab = "Lung capacity", xlab = "Height in meter", las=1, xlim=c(1.1,2.1), ylim=c(0,15))
 ```
+  
 The scatterplots shows a strong relationship between lung capacity and height in meter. It is easy to see that when the value for height in meter increases the lung capacity increases as well. I can see a positive linear relationship between the two variables. The scatterplot is in a homoscedastic form. I can see that both variables are continuous since the points in the plot is not in a vertical or horizontal "line".  
 
 ## Linear regression model
@@ -416,6 +430,7 @@ abline(mod, col=2, lwd=3)
 plot(mod$residuals, col="blue", lwd=2, ylab="Residuals", las=1, main = "Scatterplot for residuals")
 abline(h=0)
 ```
+  
 In the summary the residuals (errors) are shown, e.g. the residual value for median is -0.0060. The estimate for the intercept is -13.9263 and it's standard error is  0.3669. The regression coefficient is the average change in the dependent variable (lung capacity) for a 1-unit change in the independent variable (height in meter). It is the slope of the regression line. For height in meter the estimate is 13.2335 and the standard error is 0.2213. The residual standard error is 1.087 which is a measure of a variation of observations around the regression line. This is the same as the square root of the mean squared error. The residual standard error tells how far observed lung capacity are from the predicted or fitted lung capacity. The multiple R-squared values (0.832) means that approx. 83 % of variation of lung capacity can be explained by this model.  
 I can see that the height in meter is the cause of the lung capacity. Both of the variables is continuous and have a strong positive linear relationship. The red line (the least squared regression line) is the prediction of the lung capacity based on the height in meter. All the points are the actual data values. The distance from a point to the line is the error called residual, since it is the difference between the actual data point and the predicted value. The line passes through the mean of both variables (lung capacity and height in meter).  
 The scatterplot for the residuals shows a random pattern.  
@@ -429,7 +444,8 @@ cor(data2$Age, data2$HeightMeter, method = "pearson")
 confint(model1, conf.level=0.95)
 plot(model1)
 ```
-From the summary I can see that the R-squared is 0.8425 which means that approx. 84 % of variation in lung capacity can be explained by this model using age and height in meter. The residual standard error is 1.053 on 721 degrees of freedom. This gives me an idea of how far observed lung capacity (Y values) are form the predicted or fitted lung capacity (the Y-hats). The Intercept of -11.72674 is the estimated mean Y (lung capacity) value when all X-values (age and height in meter) are zero. In other words it is the estimated mean lung capacity for a person with age and height in meter of zero. The value for age estimated is 0.12409. This is the effect of Age on lung capacity adjusting or controlling for height in meter. In other words an increase of 1 year in age is associated with an increase of 0.12409 in lung capacity adjusting or controlling for height in meter. The slope for height in meter is 10.96872. This is the estimated effect of height in meter on lung capacity adjusting for age.  
+  
+From the summary I can see that the R-squared is 0.8425 which means that approx. 84 % of variation in lung capacity can be explained by this model using age and height in meter. The residual standard error is 1.053 on 721 degrees of freedom. This gives me an idea of how far observed lung capacity (Y values) are form the predicted or fitted lung capacity (the Y-hats). The Intercept of -11.72674 is the estimated mean Y (lung capacity) value when all X-values (age and height in meter) are zero. In other words it is the estimated mean lung capacity for a person with age and height in meter of zero. The value for age estimated is 0.12409. This is the effect of age on lung capacity adjusting or controlling for height in meter. In other words an increase of 1 year in age is associated with an increase of 0.12409 in lung capacity adjusting or controlling for height in meter. The slope for height in meter is 10.96872. This is the estimated effect of height in meter on lung capacity adjusting for age.  
 
 The Pearson's correlation between age and height in meter is 0.8348995 so the two variables are very highly correlated. The collinearity between age and height in meter means that I should not directly interpret the slope (e.g. age), as the effect of age on lung capacity adjusting for height in meter. The high correlation between age and height in meter suggests that these two effects are somewhat bounded together.  
 
@@ -443,15 +459,16 @@ model2 <- lm(data2$LungCap ~ data2$Age + data2$HeightMeter + data2$Smoke + data2
 summary(model2)
 plot(model2)
 ```
+  
 The two models is close to each other but the multiple R-squared is higher for the model with all the X-variables. Also the residual standard error value is lower for the model with all the X-values. This makes good sense since a model provided with more data points should be able to produce a more correct estimate.  
 
 # Stage 5 - Training and testing regression model  
 
-In the following I will first split my dataset into a training and testing model. I will train my regression model on the training set and then I will test my model on the training set and evaluate my model for how well it is to predict unknown (future) values.  
+In the following I will first split my data set into a training set and testing set. I will train my regression models on the training set and then I will test my models on the test set, and evaluate my models for how well they are to predict unknown (future) values.  
 
-## Splitting the dataset  
-In the following I will split my dataset into a training and testing set. The training set is used for training the model for predicting values and the testing set is used to test how well the model actually predicts the actual values in the testing set. It is worth to understand that the predicted value in the testing set has not been shown to the model before.  
-I am splitting my dataset randomly into the training set which will consist of 80 % of the original dataset and the last 20 % will be the testing set. It's important to never ever train the models on the testing data set since it will skew the results and introduce bias into the results.  
+## Splitting the data set  
+In the following I will split my data set into a training- and testing set. The training set is used for training the model for predicting values and the testing set is used to test how well the model actually predicts the actual values in the testing set. It is worth to understand that the values in the testing set has not been shown to the model before.  
+I am splitting my data set randomly into the training set which will consist of 80 % of the original data set and the last 20 % will be the testing set. It's important to never ever train the models on the testing data set since it will skew the results and introduce bias into the results.  
 First I will create random numbers uniformly distributed between 0-1 for each observation in the data set. The random numbers will be used to reorder my dataset which is saved as a new dataset. To be able to reproduce this random outcome I have set the seed.
 ```{r}
 set.seed(123)
@@ -474,6 +491,7 @@ plot(train$HeightMeter, train$LungCap, main ="Scatterplot: Lung capacity vs. hei
 plot(fit_model1$residuals, col="blue", lwd=2, ylab="Residuals", las=1, main = "Scatterplot for residuals - training set")
 abline(h=0)
 ```
+  
 From now on I will refer to the above model as model 1. When I look at the correlation coefficient between lung capacity and height in meter there seems to be a very strong correlation. The scatterplot indicates a strong, positive, linear relationship between the lung capacity and the height in meter. The scatterplot for the residuals shows how the residuals are randomly distributed. The residual standard error is 1.515 and the R-squared is 0.6726 which is approx. 67 % which in a moment will be compared to the other linear regression models.  
 
 Now I will train a regression model with multiple variables as both height in meter and age as the x-variables. I will refer to this model as model 2.
@@ -482,16 +500,20 @@ fit_model2 <- lm(LungCap~Age+HeightMeter, data = train)
 summary(fit_model2)
 plot(fit_model2)
 ```
+  
 From model 2 the main point for now is to look at the residual standard error, which is 1.069 and the R-squared is 0.8373 which is approx. 84 %. As can be seen on the residuals vs. fitted scatterplot the residuals are randomly distributed. The residual standard error and the R-squared will be discussed in a moment after having trained the last linear model with multiple variables which will be age, height in meter, smoke, gender and caesarean. I will refer to this model as model 3.
 ```{r}
 fit_model3 <- lm(LungCap~Age+HeightMeter+Smoke+Gender+Caesarean, data = train)
 summary(fit_model3)
 plot(fit_model3)
 ```
+  
 For model 3 the residual standard error is 1.024 and the R-squared is 0.8515 which is approx. 85 %. Compared with the other two models based on the training set, model 3 has the lowest error and highest percentage of R-squared which means that it explains 85 % of the dependent variable variation. Then follows model 2 and at last comes model 1.  
 
 ## Testing the model  
-In the following I will test my models and evaluate how well they perform. To assess my models performance on unseen data that's why I train on the training data set and then I use a subset of that data which is the testing data set. If the model is not tested and is made such that it performs good only on that whole training data set, then the parameters will be tuned in a way that they are only good enough to predict the value for the data which was in the training data set, and that is not generically applicable to any other data sets that I want to carry the model over to and that is called overfitting. I want to avoid overfitting and underfitting my models.  
+In the following I will test my models and evaluate how well they perform. To assess my models performance on unseen data I have trained them on the training data set and then I use the testing data set to compare predicted values with actual values. If the model is not tested and is made such that it performs good only on the training data set, then the parameters will be tuned in a way that they are only good enough to predict the value for the data which was in the training data set, and that is not generically applicable to any other data sets that I want to carry the model over to and that is called overfitting. I want to avoid overfitting and underfitting my models.  
+
+### RMSE  
 
 I will use RMSE (root mean squared error) to evaluate my models. When I use my models I will be able to compare the predicted values to actual values. In the following I am creating a new dataset based on the training set and I have added a column for each of the models with the predicted value for lung capacity.
 ```{r}
@@ -511,7 +533,8 @@ plot(lungCap_mod_rmse_train$LungCap, lungCap_mod_rmse_train$predModel2Train, las
 
 plot(lungCap_mod_rmse_train$LungCap, lungCap_mod_rmse_train$predModel3Train, las=1, main="Scatterplot - actual values vs. predicted values\n - model 3", ylab="Predicted value", xlab="Actual value")
 ```
-All of the models shows a positive linear relationship between the actual values and predicted values. Some of the data points in model 1 could be outliers, but model 2 and 3 does not seem to have any outliers. The correlation shows that when an actual value increase so does the predicted one. When comparing the three scatterplots it is possible to observe that models with more X-variables is more dense than models with a lesser number of x-variables.  
+  
+All of the models shows a positive linear relationship between the actual values and predicted values. Some of the data points in model 1 could be outliers, but model 2 and 3 does not seem to have any outliers. The correlation shows that when an actual value increase so does the predicted one. When comparing the three scatterplots it is possible to observe that models with more x-variables is more dense than models with a lesser number of x-variables.  
 
 Now I will create the mean squared error for each model.
 ```{r}
@@ -571,7 +594,7 @@ The RMSE value is good if needed to adjust for large, rare errors.
 
 ### MAE  
 
-In the following I will compute the mean absolute error for all three models, both on training and test set. Then I will look at the difference between the MAE value for training and test set on each model.
+In the following I will compute the mean absolute error for all three models, both on the training and the test set. Then I will look at the difference between the MAE value for the training and the test set on each model.
 ```{r}
 # model 1
 mae_train_model1 <- MAE(lungCap_mod_rmse_train$predModel1Train, lungCap_mod_rmse_train$LungCap)
@@ -599,8 +622,8 @@ Since model 1 has a MEA value on the test set of 1.26 it will overestimate the v
 ### MAPE  
 
 One problem with the MAE is that the relative size of the error is not always obvious. Sometimes it is hard to tell a big error from a small error. To deal with this problem, I can find the mean absolute error in percentage terms. Mean Absolute Percentage Error (MAPE) allows me to compare forecasts of different series in different scales.^[From https://canworksmart.com/using-mean-absolute-error-forecast-accuracy/, seen 22/12-20.]  
-In the following I will compute the MAPE. This is done by finding the error by subtracting the predicted value from the actual value. Then I find the absolute value of the error and divide it by the actual value and multiply it with 100. I sum up all the absolute errors in percent and divide them by the number of rows, which will give me the average in percentage.  
-I do this for each model on both the training and testing set.
+In the following I will compute the MAPE value for each model. This is done by finding the error by subtracting the predicted value from the actual value. Then I find the absolute value of the error and divide it by the actual value and multiply it with 100. I sum up all the absolute errors in percent and divide them by the number of rows, which will give me the average in percentage.  
+I do this for each model on both the training and the testing set.
 ```{r}
 # model 1 train
 actual <- train$LungCap
@@ -673,8 +696,8 @@ print(paste0("The difference between the MAPE value on test and training set for
 ```
 From the difference in MAPE value on test and training set I can conclude that for all three models the difference is very small. Model 1 had the largest difference with 1.26 %, followed by model 2 with 0.46 % and finally model 3 with the smallest difference between the test and training values with 0.02 %. When all three models have such low difference I can without bigger harm use any of the three models on other unseen data sets.  
 
-But just because a model has a small difference between the training and test set does not mean that the model itself is accurate. For this I can look at the MAPE value. Model 1 has a MAPE value on the test set for 21.17 %. Model 2 had 12.78 % and model 3 had 13.00 %. Looking at these values the model 2 would be the preferred model to use to forecast values, since it has the smallest size of error.  
-As a general remark model 2 and model 3 tends to be able to produce the same output on an unseen data set. Both models would be advisable to use, depending on what kind of errors one would like to adjust for. Model 1 seems to perform with a lower quality than model 2 and model 3.  
+But just because a model has a small difference between the training and test set does not mean that the model itself is accurate. For this I can look at the MAPE value. Model 1 has a MAPE value on the test set for 21.17 %. Model 2 had 12.78 % and model 3 had 13.00 %. Looking at these values the model 2 would be the preferred model to use to forecast values, since it has the smallest size of error in percentage.  
+As a general remark model 2 and model 3 tends to be able to produce the same output on an unseen data set. Both models would be advisable to use, depending on what kind of errors one would like to adjust for. Model 1 seems to perform with a lower accuracy than model 2 and model 3.  
 
 # Lottery - Stage 4
 
@@ -694,7 +717,7 @@ The criteria for a success is:
 - 4 winning numbers.  
 - 3 winning numbers.  
 
-In the lottery the sequence of the 7 winning numbers is selected among the fist 36 positive integers and the sequence of the winning numbers is not relevant. To calculate the possible sequences of winning numbers I use the formula:  
+In the lottery the sequence of the 7 winning numbers is selected among the first 36 positive integers and the sequence of the winning numbers is not relevant. To calculate the possible sequences of winning numbers I use the formula:  
 (n,k) = n(n-1)...(n-k+1) / k(k-1)...1  
 The same formula can be written with factorials:  
 n! / (k!*(n-k)!), when k <= n, and which is zero when k>n.
